@@ -69,11 +69,23 @@ He answers like a peer, not a mentor. Late-night energy. No jargon. No lecture.
 
 ---
 
+## Running locally
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173`
+
+---
+
 ## Project status
 
-- [ ] Frontend — onboarding, home, chat screens
-- [ ] AI layer — Aryan persona + prompt system
-- [ ] Backend — REST API + storage
+- [x] Frontend — landing, onboarding, home, chat screens
+- [ ] AI layer — Aryan persona + Claude API prompt system
+- [ ] Backend — Spring Boot REST API + storage
 - [ ] Full integration
 
 ---
