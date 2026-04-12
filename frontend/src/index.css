@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ─── Design Tokens ─────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --bg:         #0e0c0b;
+  --surface-1:  #141210;
+  --surface-2:  #1c1916;
+  --surface-3:  #242018;
+
+  /* Borders */
+  --border:     #2a2520;
+  --border-dim: #1e1b18;
+
+  /* Accent — warm yellow, aspirational, energy */
+  --accent:       #e8c547;
+  --accent-muted: rgba(232, 197, 71, 0.10);
+  --accent-glow:  rgba(232, 197, 71, 0.06);
+
+  /* Aryan's identity — cool blue, calm, composed IITian */
+  --aryan:        #60a5fa;
+  --aryan-muted:  rgba(96, 165, 250, 0.10);
+  --aryan-bubble: #0d1018;
+
+  /* Text */
+  --text-1: #ede8e0;
+  --text-2: #7a7068;
+  --text-3: #3a3530;
+
+  /* Typography */
+  --font-serif: 'Instrument Serif', Georgia, serif;
+  --font-sans:  'Inter', system-ui, sans-serif;
+  --font-mono:  'JetBrains Mono', monospace;
+
+  /* Spacing */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+}
+
+/* ─── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Grain texture overlay — the key differentiator */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+/* ─── Typography ─────────────────────────────────────────────── */
+h1, h2, h3 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+p { line-height: 1.65; }
+
+a { color: inherit; text-decoration: none; }
+
+/* ─── Utilities ──────────────────────────────────────────────── */
+.serif  { font-family: var(--font-serif); }
+.mono   { font-family: var(--font-mono); }
+.muted  { color: var(--text-2); }
+.accent { color: var(--accent); }
+.aryan-color { color: var(--aryan); }
+
+/* ─── Fade-in animation ──────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.fade-up { animation: fadeUp 0.5s ease forwards; }
+.fade-in { animation: fadeIn 0.4s ease forwards; }
+
+/* ─── Button base ────────────────────────────────────────────── */
+button {
+  cursor: pointer;
+  font-family: var(--font-sans);
+  border: none;
+  background: none;
+  outline: none;
+}
+
+/* ─── Input base ─────────────────────────────────────────────── */
+input, textarea {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  color: var(--text-1);
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-3);
+}

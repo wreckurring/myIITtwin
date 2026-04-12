@@ -1,0 +1,249 @@
+.onboarding {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+/* Progress bar at very top */
+.ob__progress {
+  height: 2px;
+  background: var(--border);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+.ob__progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 99px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ob__inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 80px 28px 120px;
+  width: 100%;
+}
+
+/* Aryan label */
+.ob__who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--text-2);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  margin-bottom: 28px;
+}
+
+.ob__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--aryan);
+  box-shadow: 0 0 8px var(--aryan);
+}
+
+/* Question */
+.ob__question {
+  margin-bottom: 36px;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.ob__question--out {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.ob__q-text {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  color: var(--text-1);
+  line-height: 1.3;
+  font-style: italic;
+}
+
+.ob__cursor {
+  display: inline-block;
+  color: var(--accent);
+  animation: blink 0.9s step-end infinite;
+  margin-left: 2px;
+}
+
+/* Answer area */
+.ob__answer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Text input */
+.ob__input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+  transition: border-color 0.2s;
+}
+
+.ob__input-wrap:focus-within {
+  border-color: var(--accent);
+}
+
+.ob__input {
+  flex: 1;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: var(--text-1);
+  background: transparent;
+}
+
+.ob__send {
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.ob__send:hover {
+  background: var(--accent-muted);
+}
+
+/* Textarea */
+.ob__textarea-wrap {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.2s;
+}
+
+.ob__textarea-wrap:focus-within {
+  border-color: var(--border);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.ob__textarea {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--text-1);
+  width: 100%;
+}
+
+.ob__textarea-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ob__hint {
+  font-size: 0.73rem;
+  color: var(--text-3);
+}
+
+/* Choices */
+.ob__choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ob__choice {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  color: var(--text-1);
+  font-size: 0.9rem;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.ob__choice:hover {
+  background: var(--surface-2);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* Multiselect vibes */
+.ob__multiselect {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ob__vibes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ob__vibe {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  font-size: 0.88rem;
+  padding: 8px 18px;
+  border-radius: 99px;
+  transition: all 0.15s;
+}
+
+.ob__vibe:hover {
+  border-color: var(--accent);
+  color: var(--text-1);
+}
+
+.ob__vibe--on {
+  background: var(--accent-muted);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Button */
+.ob__btn {
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 10px 22px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.ob__btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ob__btn:not(:disabled):hover {
+  background: #d4b03e;
+}
+
+.ob__btn--full {
+  align-self: flex-start;
+}
+
+/* Counter */
+.ob__counter {
+  position: fixed;
+  bottom: 36px;
+  right: 36px;
+  font-size: 0.75rem;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
