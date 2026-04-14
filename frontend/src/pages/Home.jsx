@@ -1,66 +1,57 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { submitLog, getLogs } from '../services/api'
 import './Home.css'
-
-const MOCK_RECENT = [
-  {
-    role: 'aryan',
-    text: "yo welcome! finally someone to talk to 😄 tell me — what semester are you in and what's the goal?",
-    time: 'just now',
-  },
-]
-
-const MOCK_LOG_REPLY =
-  "okay that's a solid week actually. graphs are where things start clicking — once you get BFS down, Dijkstra becomes obvious. one thing for this week: do the 'word ladder' problem on LC. just that one. it'll stretch how you think about BFS."
 
 export default function Home() {
   const navigate = useNavigate()
   const [profile, setProfile] = useState(null)
+  const [userId, setUserId] = useState(null)
   const [logText, setLogText] = useState('')
   const [logs, setLogs] = useState([])
-  const [recentChat, setRecentChat] = useState(MOCK_RECENT)
+  const [recentChat, setRecentChat] = useState([])
   const [submitting, setSubmitting] = useState(false)
-  const [weekCount, setWeekCount] = useState(0)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const raw = localStorage.getItem('myiittwin_profile')
+    const uid = localStorage.getItem('myiittwin_userId')
     if (!raw) { navigate('/onboarding'); return }
-    setProfile(JSON.parse(raw))
+    const p = JSON.parse(raw)
+    setProfile(p)
+    setUserId(uid || p.userId)
 
-    const savedLogs = JSON.parse(localStorage.getItem('myiittwin_logs') || '[]')
-    setLogs(savedLogs)
-    setWeekCount(savedLogs.length)
+    // Load logs from backend
+    const id = uid || p.userId
+    if (id) {
+      getLogs(id).then(setLogs).catch(() => {
+        // Fall back to localStorage if backend is down
+        const saved = JSON.parse(localStorage.getItem('myiittwin_logs') || '[]')
+        setLogs(saved)
+      })
+    }
   }, [navigate])
 
-  function handleLogSubmit(e) {
+  async function handleLogSubmit(e) {
     e.preventDefault()
-    if (!logText.trim()) return
-
+    if (!logText.trim() || !userId) return
     setSubmitting(true)
+    setError(null)
 
-    // Simulate Aryan reacting (mock — will wire to API later)
-    setTimeout(() => {
-      const newLog = {
-        week: weekCount + 1,
-        text: logText.trim(),
-        aryanReply: MOCK_LOG_REPLY,
-        date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
-      }
-
-      const updated = [...logs, newLog]
+    try {
+      const result = await submitLog(userId, logText.trim())
+      const updated = [...logs, result]
       setLogs(updated)
-      localStorage.setItem('myiittwin_logs', JSON.stringify(updated))
-      setWeekCount(updated.length)
-
-      // Add to recent chat
       setRecentChat([
         { role: 'user', text: logText.trim(), time: 'just now' },
-        { role: 'aryan', text: MOCK_LOG_REPLY, time: 'just now' },
+        { role: 'aryan', text: result.aryanReply, time: 'just now' },
       ])
-
       setLogText('')
+    } catch (err) {
+      setError(err.message)
+    } finally {
       setSubmitting(false)
-    }, 1200)
+    }
   }
 
   if (!profile) return null
@@ -104,14 +95,13 @@ export default function Home() {
 
       {/* Main */}
       <main className="home__main">
-        {/* Header */}
         <header className="home__header">
           <div>
             <p className="home__greeting">{greeting}</p>
             <h1 className="home__title serif">{profile.name}</h1>
           </div>
           <div className="home__streak">
-            <span className="home__streak-num">{weekCount}</span>
+            <span className="home__streak-num">{logs.length}</span>
             <span className="home__streak-label">weeks logged</span>
           </div>
         </header>
@@ -129,52 +119,44 @@ export default function Home() {
               rows={3}
               disabled={submitting}
             />
+            {error && <p className="home__log-error">{error}</p>}
             <div className="home__log-footer">
               <span className="home__log-hint">Aryan will react to this</span>
-              <button
-                type="submit"
-                className="home__log-btn"
-                disabled={!logText.trim() || submitting}
-              >
+              <button type="submit" className="home__log-btn" disabled={!logText.trim() || submitting}>
                 {submitting ? (
-                  <span className="home__log-loading">
-                    <span />
-                    <span />
-                    <span />
-                  </span>
+                  <span className="home__log-loading"><span /><span /><span /></span>
                 ) : 'send →'}
               </button>
             </div>
           </form>
         </section>
 
-        {/* Recent chat */}
-        <section className="home__chat-section">
-          <div className="home__section-label">
-            recent
-            <button className="home__see-all" onClick={() => navigate('/chat')}>
-              see all →
-            </button>
-          </div>
-
-          <div className="home__chat-preview">
-            <div className="home__aryan-tag">
-              <span className="home__aryan-dot" />
-              Aryan · IIT Bombay
+        {/* Recent chat from log reaction */}
+        {recentChat.length > 0 && (
+          <section className="home__chat-section">
+            <div className="home__section-label">
+              aryan's reaction
+              <button className="home__see-all" onClick={() => navigate('/chat')}>full chat →</button>
             </div>
-            {recentChat.map((msg, i) => (
-              <div
-                key={i}
-                className={`home__msg ${msg.role === 'aryan' ? 'home__msg--aryan' : 'home__msg--user'}`}
-                style={{ animationDelay: `${i * 0.08}s` }}
-              >
-                <p>{msg.text}</p>
+            <div className="home__chat-preview">
+              <div className="home__aryan-tag">
+                <span className="home__aryan-dot" />
+                Aryan · IIT Bombay
               </div>
-            ))}
-          </div>
-        </section>
+              {recentChat.map((msg, i) => (
+                <div
+                  key={i}
+                  className={`home__msg ${msg.role === 'aryan' ? 'home__msg--aryan' : 'home__msg--user'}`}
+                  style={{ animationDelay: `${i * 0.08}s` }}
+                >
+                  <p>{msg.text}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
-        {/* Log history strip */}
+        {/* Log history */}
         {logs.length > 0 && (
           <section className="home__history-section">
             <div className="home__section-label">past weeks</div>
@@ -182,7 +164,7 @@ export default function Home() {
               {logs.slice().reverse().map((log, i) => (
                 <div key={i} className="home__history-item">
                   <div className="home__history-week">week {log.week}</div>
-                  <div className="home__history-text">{log.text}</div>
+                  <div className="home__history-text">{log.text || log.content}</div>
                   <div className="home__history-date">{log.date}</div>
                 </div>
               ))}

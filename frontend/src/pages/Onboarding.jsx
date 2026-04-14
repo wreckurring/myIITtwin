@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { createUser } from '../services/api'
 import './Onboarding.css'
 
 const VIBES = ['Sports', 'Music', 'Gaming', 'Art', 'Movies', 'Reading', 'Just coding']
@@ -113,7 +114,7 @@ export default function Onboarding() {
     return inputVal.trim().length > 0
   }
 
-  function advance(value) {
+  async function advance(value) {
     const newAnswers = { ...answers, [current.id]: value }
     setAnswers(newAnswers)
 
@@ -124,9 +125,25 @@ export default function Onboarding() {
         setAnimating(false)
       }, 300)
     } else {
-      // Done — save to localStorage and navigate
-      localStorage.setItem('myiittwin_profile', JSON.stringify(newAnswers))
-      navigate('/home')
+      // Done — POST to backend, save userId + profile to localStorage
+      try {
+        const userData = await createUser({
+          name: newAnswers.name,
+          semester: newAnswers.semester,
+          career: newAnswers.career,
+          background: newAnswers.background,
+          vibe: Array.isArray(newAnswers.vibe) ? newAnswers.vibe : [newAnswers.vibe],
+          goal: newAnswers.goal,
+        })
+        localStorage.setItem('myiittwin_userId', userData.userId)
+        localStorage.setItem('myiittwin_profile', JSON.stringify(userData))
+        navigate('/home')
+      } catch (err) {
+        console.error('Onboarding error:', err)
+        // Fallback: save locally and continue
+        localStorage.setItem('myiittwin_profile', JSON.stringify(newAnswers))
+        navigate('/home')
+      }
     }
   }
 

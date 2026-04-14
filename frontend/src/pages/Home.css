@@ -240,6 +240,12 @@
 
 .home__log-btn:not(:disabled):hover { background: #d4b03e; }
 
+.home__log-error {
+  font-size: 0.8rem;
+  color: #f87171;
+  padding: 0 2px;
+}
+
 /* Loading dots */
 .home__log-loading {
   display: flex;
