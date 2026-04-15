@@ -1,8 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Landing from './pages/Landing'
 import Onboarding from './pages/Onboarding'
 import Home from './pages/Home'
 import Chat from './pages/Chat'
+import NotFound from './pages/NotFound'
 
 export default function App() {
   return (
@@ -12,7 +13,7 @@ export default function App() {
         <Route path="/onboarding"  element={<Onboarding />} />
         <Route path="/home"        element={<Home />} />
         <Route path="/chat"        element={<Chat />} />
-        <Route path="*"            element={<Navigate to="/" />} />
+        <Route path="*"            element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )

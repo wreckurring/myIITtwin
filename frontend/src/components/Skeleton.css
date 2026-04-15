@@ -1,0 +1,58 @@
+/* Shimmer keyframe */
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-2)        0%,
+    var(--surface-3)       40%,
+    var(--surface-2)       80%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+  flex-shrink: 0;
+}
+
+/* Chat bubble skeletons */
+.skeleton-bubble-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.skeleton-bubble-wrap--right {
+  flex-direction: row-reverse;
+}
+
+.skeleton-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skeleton-bubble-lines {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  max-width: 60%;
+  padding: 12px 14px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-dim);
+  border-radius: 14px;
+}
+
+/* Log item skeleton */
+.skeleton-log-item {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-dim);
+  border-radius: 14px;
+  padding: 14px 16px;
+}

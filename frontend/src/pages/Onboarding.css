@@ -247,3 +247,10 @@
   font-variant-numeric: tabular-nums;
   font-family: var(--font-mono);
 }
+
+/* ─── Mobile ─────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .ob__inner { padding: 72px 20px 100px; }
+  .ob__q-text { font-size: 1.4rem; }
+  .ob__counter { bottom: 24px; right: 20px; }
+}

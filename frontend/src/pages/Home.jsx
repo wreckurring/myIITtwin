@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { submitLog, getLogs } from '../services/api'
+import { SkeletonLine, SkeletonLogItem } from '../components/Skeleton'
+import BottomNav from '../components/BottomNav'
 import './Home.css'
 
 export default function Home() {
@@ -8,6 +10,7 @@ export default function Home() {
   const [profile, setProfile] = useState(null)
   const [userId, setUserId] = useState(null)
   const [logText, setLogText] = useState('')
+  const [logsLoading, setLogsLoading] = useState(true)
   const [logs, setLogs] = useState([])
   const [recentChat, setRecentChat] = useState([])
   const [submitting, setSubmitting] = useState(false)
@@ -24,11 +27,16 @@ export default function Home() {
     // Load logs from backend
     const id = uid || p.userId
     if (id) {
-      getLogs(id).then(setLogs).catch(() => {
-        // Fall back to localStorage if backend is down
-        const saved = JSON.parse(localStorage.getItem('myiittwin_logs') || '[]')
-        setLogs(saved)
-      })
+      setLogsLoading(true)
+      getLogs(id)
+        .then(setLogs)
+        .catch(() => {
+          const saved = JSON.parse(localStorage.getItem('myiittwin_logs') || '[]')
+          setLogs(saved)
+        })
+        .finally(() => setLogsLoading(false))
+    } else {
+      setLogsLoading(false)
     }
   }, [navigate])
 
@@ -101,7 +109,10 @@ export default function Home() {
             <h1 className="home__title serif">{profile.name}</h1>
           </div>
           <div className="home__streak">
-            <span className="home__streak-num">{logs.length}</span>
+            {logsLoading
+              ? <SkeletonLine width="32px" height="28px" style={{ margin: '0 auto 4px' }} />
+              : <span className="home__streak-num">{logs.length}</span>
+            }
             <span className="home__streak-label">weeks logged</span>
           </div>
         </header>
@@ -157,21 +168,30 @@ export default function Home() {
         )}
 
         {/* Log history */}
-        {logs.length > 0 && (
-          <section className="home__history-section">
-            <div className="home__section-label">past weeks</div>
-            <div className="home__history">
-              {logs.slice().reverse().map((log, i) => (
+        <section className="home__history-section">
+          <div className="home__section-label">past weeks</div>
+          <div className="home__history">
+            {logsLoading ? (
+              <>
+                <SkeletonLogItem />
+                <SkeletonLogItem />
+                <SkeletonLogItem />
+              </>
+            ) : logs.length === 0 ? (
+              <p className="home__empty">no logs yet — submit your first one above</p>
+            ) : (
+              logs.slice().reverse().map((log, i) => (
                 <div key={i} className="home__history-item">
                   <div className="home__history-week">week {log.week}</div>
                   <div className="home__history-text">{log.text || log.content}</div>
                   <div className="home__history-date">{log.date}</div>
                 </div>
-              ))}
-            </div>
-          </section>
-        )}
+              ))
+            )}
+          </div>
+        </section>
       </main>
+      <BottomNav />
     </div>
   )
 }

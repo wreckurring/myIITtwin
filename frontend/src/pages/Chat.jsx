@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getChatHistory, sendChatMessage } from '../services/api'
+import { SkeletonBubble } from '../components/Skeleton'
+import BottomNav from '../components/BottomNav'
 import './Chat.css'
 
 export default function Chat() {
@@ -10,6 +12,7 @@ export default function Chat() {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
+  const [historyLoading, setHistoryLoading] = useState(true)
   const [error, setError] = useState(null)
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
@@ -24,6 +27,7 @@ export default function Chat() {
     setUserId(id)
 
     if (id) {
+      setHistoryLoading(true)
       getChatHistory(id)
         .then(history => setMessages(history))
         .catch(() => {
@@ -34,6 +38,7 @@ export default function Chat() {
             time: now(),
           }])
         })
+        .finally(() => setHistoryLoading(false))
     }
   }, [navigate])
 
@@ -141,7 +146,13 @@ export default function Chat() {
         </header>
 
         <div className="chat__messages">
-          {messages.map((msg, i) => (
+          {historyLoading ? (
+            <>
+              <SkeletonBubble align="left" />
+              <SkeletonBubble align="right" />
+              <SkeletonBubble align="left" />
+            </>
+          ) : messages.map((msg, i) => (
             <div key={i} className={`chat__msg-row ${msg.role === 'user' ? 'chat__msg-row--user' : ''}`}>
               {msg.role === 'aryan' && <div className="chat__aryan-avatar">A</div>}
               <div className={`chat__bubble ${msg.role === 'aryan' ? 'chat__bubble--aryan' : 'chat__bubble--user'}`}>
@@ -185,6 +196,7 @@ export default function Chat() {
           <p className="chat__input-hint">enter to send · shift+enter for new line</p>
         </form>
       </div>
+      <BottomNav />
     </div>
   )
 }
