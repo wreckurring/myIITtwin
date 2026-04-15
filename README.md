@@ -61,15 +61,35 @@ He answers like a peer, not a mentor. Late-night energy. No jargon. No lecture.
 
 | Layer | Tech |
 |-------|------|
-| Frontend | React (Vite) |
-| AI | Claude API (Anthropic) |
+| Frontend | React 18 + Vite |
+| AI | Google Gemini 1.5 Flash |
 | Backend | Java 17 + Spring Boot 3 |
-| Database | H2 (dev) / PostgreSQL (prod) |
-| Build | Maven |
+| Database | H2 file-based (dev) / PostgreSQL (prod) |
+| Rate limiting | Bucket4j |
 
 ---
 
 ## Running locally
+
+### Prerequisites
+- Node 18+
+- Java 17+
+- Maven
+- A [Gemini API key](https://aistudio.google.com) (free tier works)
+
+### Backend
+
+```bash
+cd backend
+set GEMINI_API_KEY=your-key-here       # Windows
+# export GEMINI_API_KEY=your-key-here  # macOS / Linux
+mvn spring-boot:run
+```
+
+Runs on `http://localhost:8080`  
+H2 console available at `http://localhost:8080/h2-console`
+
+### Frontend
 
 ```bash
 cd frontend
@@ -77,16 +97,31 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173`
+Runs on `http://localhost:5173`
+
+---
+
+## API endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/api/users` | Create user profile from onboarding |
+| GET | `/api/users/{id}` | Get user profile |
+| POST | `/api/chat/message` | Send message, get Aryan's reply |
+| GET | `/api/chat/history/{userId}` | Get full chat history |
+| POST | `/api/logs/{userId}` | Submit weekly log, get Aryan's reaction |
+| GET | `/api/logs/{userId}` | Get all past logs |
 
 ---
 
 ## Project status
 
 - [x] Frontend — landing, onboarding, home, chat screens
-- [ ] AI layer — Aryan persona + Claude API prompt system
-- [ ] Backend — Spring Boot REST API + storage
-- [ ] Full integration
+- [x] Backend — Spring Boot REST API + H2 storage
+- [x] AI layer — Aryan persona + Gemini API prompt system
+- [x] Full integration — frontend wired to backend
+- [x] Polish — skeletons, mobile responsive, 404 page
+- [ ] Deployment
 
 ---
 
