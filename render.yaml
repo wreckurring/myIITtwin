@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: myiittwin-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: GEMINI_API_KEY
+        sync: false          # set manually in Render dashboard
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false          # set to your Vercel URL after deploy
+      - key: DATABASE_URL
+        fromDatabase:
+          name: myiittwin-db
+          property: connectionString
+
+databases:
+  - name: myiittwin-db
+    plan: free
+    databaseName: myiittwin
+    user: myiittwin

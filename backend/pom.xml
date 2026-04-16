@@ -40,6 +40,13 @@
       <scope>runtime</scope>
     </dependency>
 
+    <!-- PostgreSQL (prod) -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
     <!-- Rate limiting -->
     <dependency>
       <groupId>com.bucket4j</groupId>
