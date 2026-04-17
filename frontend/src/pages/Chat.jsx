@@ -28,6 +28,13 @@ export default function Chat() {
 
   const limitReached = !userKey && msgCount >= FREE_LIMIT
 
+  function resetApp() {
+    if (!window.confirm('Start over? This clears your profile, chat history, and all logs.')) return
+    ;['myiittwin_profile', 'myiittwin_userId', 'myiittwin_logs',
+      'myiittwin_msg_count', 'myiittwin_gemini_key'].forEach(k => localStorage.removeItem(k))
+    navigate('/onboarding')
+  }
+
   useEffect(() => {
     const raw = localStorage.getItem('myiittwin_profile')
     const uid = localStorage.getItem('myiittwin_userId')
@@ -153,6 +160,7 @@ export default function Chat() {
                 <div className="chat__profile-meta">{profile.semester}</div>
               </div>
             </div>
+            <button className="chat__reset-btn" onClick={resetApp}>start over</button>
           </div>
         )}
       </aside>

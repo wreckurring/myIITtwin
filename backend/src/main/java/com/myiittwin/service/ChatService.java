@@ -5,10 +5,12 @@ import com.myiittwin.model.ChatMessage;
 import com.myiittwin.model.User;
 import com.myiittwin.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,12 +23,15 @@ public class ChatService {
     private final GeminiService geminiService;
 
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("hh:mm a");
+    private static final int HISTORY_LIMIT = 30;
 
     public List<ChatResponse> getHistory(String userId) {
-        List<ChatMessage> messages = chatMessageRepository.findByUserIdOrderByCreatedAtAsc(userId);
+        List<ChatMessage> recent = chatMessageRepository.findRecentByUserId(
+            userId, PageRequest.of(0, HISTORY_LIMIT)
+        );
 
         // If no history, create Aryan's opening message
-        if (messages.isEmpty()) {
+        if (recent.isEmpty()) {
             User user = userService.getUserEntity(userId);
             String intro = String.format(
                 "hey %s! just settled in after a long lab session 😅 what's up — anything specific you wanna know about, or just catching up?",
@@ -36,7 +41,9 @@ public class ChatService {
             return List.of(toResponse(aryanIntro));
         }
 
-        return messages.stream().map(this::toResponse).collect(Collectors.toList());
+        // Query returns newest-first; reverse to chronological order for the client
+        Collections.reverse(recent);
+        return recent.stream().map(this::toResponse).collect(Collectors.toList());
     }
 
     public ChatResponse sendMessage(String userId, String text, String userApiKey) {

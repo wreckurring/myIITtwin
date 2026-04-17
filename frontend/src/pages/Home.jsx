@@ -62,9 +62,20 @@ export default function Home() {
     }
   }
 
+  function resetApp() {
+    if (!window.confirm('Start over? This clears your profile, chat history, and all logs.')) return
+    ;['myiittwin_profile', 'myiittwin_userId', 'myiittwin_logs',
+      'myiittwin_msg_count', 'myiittwin_gemini_key'].forEach(k => localStorage.removeItem(k))
+    navigate('/onboarding')
+  }
+
   if (!profile) return null
 
   const greeting = getGreeting()
+  const lastLogReply = logs.length > 0 ? logs[logs.length - 1]?.aryanReply : null
+  const pinnedReaction = recentChat.length > 0
+    ? recentChat
+    : lastLogReply ? [{ role: 'aryan', text: lastLogReply }] : []
 
   return (
     <div className="home">
@@ -98,6 +109,7 @@ export default function Home() {
               <div className="home__profile-meta">{profile.semester}</div>
             </div>
           </div>
+          <button className="home__reset-btn" onClick={resetApp}>start over</button>
         </div>
       </aside>
 
@@ -142,11 +154,11 @@ export default function Home() {
           </form>
         </section>
 
-        {/* Recent chat from log reaction */}
-        {recentChat.length > 0 && (
+        {/* Pinned Aryan reaction — new submission takes priority, else last log's reply */}
+        {!logsLoading && pinnedReaction.length > 0 && (
           <section className="home__chat-section">
             <div className="home__section-label">
-              aryan's reaction
+              {recentChat.length > 0 ? "aryan's reaction" : "last thing aryan said"}
               <button className="home__see-all" onClick={() => navigate('/chat')}>full chat →</button>
             </div>
             <div className="home__chat-preview">
@@ -154,7 +166,7 @@ export default function Home() {
                 <span className="home__aryan-dot" />
                 Aryan · IIT Bombay
               </div>
-              {recentChat.map((msg, i) => (
+              {pinnedReaction.map((msg, i) => (
                 <div
                   key={i}
                   className={`home__msg ${msg.role === 'aryan' ? 'home__msg--aryan' : 'home__msg--user'}`}
@@ -190,6 +202,7 @@ export default function Home() {
             )}
           </div>
         </section>
+        <button className="home__reset-mobile" onClick={resetApp}>start over</button>
       </main>
       <BottomNav />
     </div>
