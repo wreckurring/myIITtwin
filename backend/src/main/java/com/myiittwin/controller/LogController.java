@@ -19,8 +19,9 @@ public class LogController {
     @PostMapping("/{userId}")
     public ResponseEntity<LogResponse> submitLog(
             @PathVariable String userId,
-            @RequestBody LogRequest request) {
-        return ResponseEntity.ok(logService.submitLog(userId, request.getText()));
+            @RequestBody LogRequest request,
+            @RequestHeader(value = "X-Gemini-Key", required = false) String userApiKey) {
+        return ResponseEntity.ok(logService.submitLog(userId, request.getText(), userApiKey));
     }
 
     @GetMapping("/{userId}")

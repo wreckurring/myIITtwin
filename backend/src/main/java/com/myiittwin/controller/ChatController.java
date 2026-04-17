@@ -22,7 +22,9 @@ public class ChatController {
     }
 
     @PostMapping("/message")
-    public ResponseEntity<ChatResponse> sendMessage(@RequestBody ChatRequest request) {
-        return ResponseEntity.ok(chatService.sendMessage(request.getUserId(), request.getText()));
+    public ResponseEntity<ChatResponse> sendMessage(
+            @RequestBody ChatRequest request,
+            @RequestHeader(value = "X-Gemini-Key", required = false) String userApiKey) {
+        return ResponseEntity.ok(chatService.sendMessage(request.getUserId(), request.getText(), userApiKey));
     }
 }

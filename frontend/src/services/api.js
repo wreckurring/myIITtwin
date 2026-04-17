@@ -1,5 +1,12 @@
 const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080') + '/api'
 
+function geminiHeaders() {
+  const headers = { 'Content-Type': 'application/json' }
+  const key = localStorage.getItem('myiittwin_gemini_key')
+  if (key) headers['X-Gemini-Key'] = key
+  return headers
+}
+
 export async function createUser(profile) {
   const res = await fetch(`${BASE}/users`, {
     method: 'POST',
@@ -19,7 +26,7 @@ export async function getChatHistory(userId) {
 export async function sendChatMessage(userId, text) {
   const res = await fetch(`${BASE}/chat/message`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: geminiHeaders(),
     body: JSON.stringify({ userId, text }),
   })
   if (res.status === 429) {
@@ -33,7 +40,7 @@ export async function sendChatMessage(userId, text) {
 export async function submitLog(userId, text) {
   const res = await fetch(`${BASE}/logs/${userId}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: geminiHeaders(),
     body: JSON.stringify({ text }),
   })
   if (res.status === 429) {

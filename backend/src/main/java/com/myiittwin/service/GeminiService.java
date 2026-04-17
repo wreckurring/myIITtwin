@@ -27,13 +27,13 @@ public class GeminiService {
     // Max recent messages sent as context to Gemini
     private static final int CONTEXT_WINDOW = 10;
 
-    public String getChatReply(User user, String userMessage, List<ChatMessage> history) {
+    public String getChatReply(User user, String userMessage, List<ChatMessage> history, String userApiKey) {
         String systemPrompt = buildSystemPrompt(user);
         String conversationContext = buildConversationContext(history, userMessage);
-        return callGemini(systemPrompt, conversationContext);
+        return callGemini(systemPrompt, conversationContext, resolveKey(userApiKey));
     }
 
-    public String getLogReaction(User user, String logText) {
+    public String getLogReaction(User user, String logText, String userApiKey) {
         String systemPrompt = buildSystemPrompt(user);
         String logPrompt = String.format(
             "The user just submitted their weekly log: \"%s\"\n\n" +
@@ -43,7 +43,11 @@ public class GeminiService {
             "Not a list — just one thing. Keep it under 100 words.",
             logText
         );
-        return callGemini(systemPrompt, logPrompt);
+        return callGemini(systemPrompt, logPrompt, resolveKey(userApiKey));
+    }
+
+    private String resolveKey(String userApiKey) {
+        return (userApiKey != null && !userApiKey.isBlank()) ? userApiKey : apiKey;
     }
 
     private String buildSystemPrompt(User user) {
@@ -116,9 +120,9 @@ public class GeminiService {
         return ctx.toString();
     }
 
-    private String callGemini(String systemPrompt, String userContent) {
+    private String callGemini(String systemPrompt, String userContent, String key) {
         try {
-            String url = apiUrl + "?key=" + apiKey;
+            String url = apiUrl + "?key=" + key;
 
             Map<String, Object> requestBody = Map.of(
                 "system_instruction", Map.of(

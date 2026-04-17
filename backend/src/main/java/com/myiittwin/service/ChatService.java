@@ -39,7 +39,7 @@ public class ChatService {
         return messages.stream().map(this::toResponse).collect(Collectors.toList());
     }
 
-    public ChatResponse sendMessage(String userId, String text) {
+    public ChatResponse sendMessage(String userId, String text, String userApiKey) {
         User user = userService.getUserEntity(userId);
         List<ChatMessage> history = chatMessageRepository.findByUserIdOrderByCreatedAtAsc(userId);
 
@@ -47,7 +47,7 @@ public class ChatService {
         saveMessage(userId, "user", text);
 
         // Get Aryan's reply from Gemini
-        String reply = geminiService.getChatReply(user, text, history);
+        String reply = geminiService.getChatReply(user, text, history, userApiKey);
 
         // Save Aryan's reply
         ChatMessage aryanMsg = saveMessage(userId, "aryan", reply);

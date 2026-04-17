@@ -5,6 +5,8 @@ import { SkeletonBubble } from '../components/Skeleton'
 import BottomNav from '../components/BottomNav'
 import './Chat.css'
 
+const FREE_LIMIT = 10
+
 export default function Chat() {
   const navigate = useNavigate()
   const [profile, setProfile] = useState(null)
@@ -14,8 +16,17 @@ export default function Chat() {
   const [typing, setTyping] = useState(false)
   const [historyLoading, setHistoryLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [msgCount, setMsgCount] = useState(() =>
+    parseInt(localStorage.getItem('myiittwin_msg_count') || '0', 10)
+  )
+  const [userKey, setUserKey] = useState(() =>
+    localStorage.getItem('myiittwin_gemini_key') || ''
+  )
+  const [keyInput, setKeyInput] = useState('')
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
+
+  const limitReached = !userKey && msgCount >= FREE_LIMIT
 
   useEffect(() => {
     const raw = localStorage.getItem('myiittwin_profile')
@@ -46,9 +57,17 @@ export default function Chat() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, typing])
 
+  function saveUserKey() {
+    const trimmed = keyInput.trim()
+    if (!trimmed) return
+    localStorage.setItem('myiittwin_gemini_key', trimmed)
+    setUserKey(trimmed)
+    setKeyInput('')
+  }
+
   async function send(e) {
     e?.preventDefault()
-    if (!input.trim() || typing || !userId) return
+    if (!input.trim() || typing || !userId || limitReached) return
 
     const userMsg = { role: 'user', text: input.trim(), time: now() }
     setMessages(prev => [...prev, userMsg])
@@ -59,9 +78,14 @@ export default function Chat() {
     try {
       const reply = await sendChatMessage(userId, userMsg.text)
       setMessages(prev => [...prev, { role: reply.role, text: reply.text, time: reply.time || now() }])
+      // Only count toward free limit when using server key
+      if (!userKey) {
+        const next = msgCount + 1
+        setMsgCount(next)
+        localStorage.setItem('myiittwin_msg_count', String(next))
+      }
     } catch (err) {
       setError(err.message)
-      // Show error as Aryan message so it stays in-flow
       setMessages(prev => [...prev, {
         role: 'aryan',
         text: err.message.includes('Rate limit') ? err.message : "bro my connection dropped 😭 try again?",
@@ -173,6 +197,34 @@ export default function Chat() {
           <div ref={bottomRef} />
         </div>
 
+        {limitReached && (
+          <div className="chat__byok">
+            <div className="chat__byok-head">
+              <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <rect x="2" y="7" width="11" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
+                <path d="M5 7V4.5a2.5 2.5 0 0 1 5 0V7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+              </svg>
+              <span>you've used your {FREE_LIMIT} free messages</span>
+            </div>
+            <p className="chat__byok-safety">
+              add your Gemini API key to keep chatting — it's stored only in your browser and never sent to our servers.
+            </p>
+            <div className="chat__byok-input-row">
+              <input
+                className="chat__byok-input"
+                type="password"
+                placeholder="AIza..."
+                value={keyInput}
+                onChange={e => setKeyInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && saveUserKey()}
+              />
+              <button className="chat__byok-save" onClick={saveUserKey} disabled={!keyInput.trim()}>
+                save
+              </button>
+            </div>
+          </div>
+        )}
+
         <form className="chat__input-area" onSubmit={send}>
           <div className="chat__input-wrap">
             <textarea
@@ -181,13 +233,13 @@ export default function Chat() {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKey}
-              placeholder="message Aryan..."
+              placeholder={limitReached ? "add your API key above to keep chatting" : "message Aryan..."}
               rows={1}
-              disabled={typing}
+              disabled={typing || limitReached}
             />
             <button type="submit"
-              className={`chat__send ${input.trim() ? 'chat__send--active' : ''}`}
-              disabled={!input.trim() || typing}>
+              className={`chat__send ${input.trim() && !limitReached ? 'chat__send--active' : ''}`}
+              disabled={!input.trim() || typing || limitReached}>
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <path d="M16 9L2 2l3 7-3 7 14-7z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>

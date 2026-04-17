@@ -18,11 +18,11 @@ public class LogService {
     private final UserService userService;
     private final GeminiService geminiService;
 
-    public LogResponse submitLog(String userId, String text) {
+    public LogResponse submitLog(String userId, String text, String userApiKey) {
         User user = userService.getUserEntity(userId);
 
         int weekNumber = (int) weeklyLogRepository.countByUserId(userId) + 1;
-        String aryanReply = geminiService.getLogReaction(user, text);
+        String aryanReply = geminiService.getLogReaction(user, text, userApiKey);
 
         WeeklyLog log = new WeeklyLog();
         log.setUserId(userId);

@@ -332,6 +332,75 @@
   padding: 0 4px;
 }
 
+/* ─── BYOK section ───────────────────────────────────────────── */
+.chat__byok {
+  margin: 0 28px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat__byok-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.chat__byok-safety {
+  font-size: 0.78rem;
+  color: var(--text-2);
+  line-height: 1.55;
+}
+
+.chat__byok-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.chat__byok-input {
+  flex: 1;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  color: var(--text-1);
+  font-family: var(--font-mono);
+  transition: border-color 0.15s;
+}
+
+.chat__byok-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.chat__byok-save {
+  padding: 8px 18px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 0.83rem;
+  font-weight: 500;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.chat__byok-save:hover:not(:disabled) {
+  background: #d4b03e;
+}
+
+.chat__byok-save:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 /* ─── Mobile ─────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .chat__sidebar { display: none; }
@@ -352,4 +421,8 @@
   }
 
   .chat__input-hint { display: none; }
+
+  .chat__byok {
+    margin: 0 16px;
+  }
 }
