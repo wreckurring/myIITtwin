@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myiittwin.model.ChatMessage;
 import com.myiittwin.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -15,11 +18,19 @@ import java.util.Map;
 @Service
 public class GeminiService {
 
+    private static final Logger log = LoggerFactory.getLogger(GeminiService.class);
+
     @Value("${gemini.api.key}")
     private String apiKey;
 
     @Value("${gemini.api.url}")
     private String apiUrl;
+
+    @jakarta.annotation.PostConstruct
+    void logKeyStatus() {
+        boolean keyPresent = apiKey != null && !apiKey.isBlank() && !apiKey.equals("your-api-key-here");
+        log.info("GeminiService ready — API key present: {}", keyPresent);
+    }
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -151,7 +162,11 @@ public class GeminiService {
                 .path("text")
                 .asText("sorry, I'm a bit distracted rn 😅 ask me again?");
 
+        } catch (HttpClientErrorException e) {
+            log.error("Gemini API HTTP error {}: {}", e.getStatusCode(), e.getResponseBodyAsString());
+            return "bro my wifi just died 😭 try again in a sec";
         } catch (Exception e) {
+            log.error("Gemini API call failed: {}", e.getMessage(), e);
             return "bro my wifi just died 😭 try again in a sec";
         }
     }
