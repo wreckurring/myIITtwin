@@ -1,0 +1,61 @@
+.errb {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 24px;
+}
+
+.errb__card {
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.errb__avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--aryan-muted);
+  border: 1px solid rgba(96,165,250,0.25);
+  color: var(--aryan);
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.errb__title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-1);
+  line-height: 1.45;
+}
+
+.errb__body {
+  font-size: 0.88rem;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+.errb__btn {
+  margin-top: 8px;
+  padding: 10px 28px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.errb__btn:hover {
+  background: #d4b03e;
+}

@@ -208,6 +208,8 @@
   background: transparent;
   border: none;
   outline: none;
+  min-height: 72px;
+  max-height: 240px;
 }
 
 .home__log-input::placeholder { color: var(--text-3); }

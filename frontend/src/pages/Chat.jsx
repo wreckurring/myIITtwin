@@ -64,6 +64,12 @@ export default function Chat() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, typing])
 
+  useEffect(() => {
+    if (!inputRef.current) return
+    inputRef.current.style.height = 'auto'
+    inputRef.current.style.height = inputRef.current.scrollHeight + 'px'
+  }, [input])
+
   function saveUserKey() {
     const trimmed = keyInput.trim()
     if (!trimmed) return
@@ -243,6 +249,7 @@ export default function Chat() {
               onKeyDown={handleKey}
               placeholder={limitReached ? "add your API key above to keep chatting" : "message Aryan..."}
               rows={1}
+              style={{ overflowY: 'hidden' }}
               disabled={typing || limitReached}
             />
             <button type="submit"

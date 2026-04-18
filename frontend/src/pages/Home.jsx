@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { submitLog, getLogs } from '../services/api'
 import { SkeletonLine, SkeletonLogItem } from '../components/Skeleton'
@@ -15,6 +15,7 @@ export default function Home() {
   const [recentChat, setRecentChat] = useState([])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
+  const logRef = useRef(null)
 
   useEffect(() => {
     const raw = localStorage.getItem('myiittwin_profile')
@@ -39,6 +40,12 @@ export default function Home() {
       setLogsLoading(false)
     }
   }, [navigate])
+
+  useEffect(() => {
+    if (!logRef.current) return
+    logRef.current.style.height = 'auto'
+    logRef.current.style.height = logRef.current.scrollHeight + 'px'
+  }, [logText])
 
   async function handleLogSubmit(e) {
     e.preventDefault()
@@ -135,11 +142,13 @@ export default function Home() {
           <form className="home__log-card" onSubmit={handleLogSubmit}>
             <div className="home__log-prompt">what did you get done this week?</div>
             <textarea
+              ref={logRef}
               className="home__log-input"
               value={logText}
               onChange={e => setLogText(e.target.value)}
               placeholder="be honest — studies, projects, random stuff, non-coding things too..."
               rows={3}
+              style={{ overflowY: 'hidden' }}
               disabled={submitting}
             />
             {error && <p className="home__log-error">{error}</p>}
