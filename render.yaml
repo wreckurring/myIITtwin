@@ -12,10 +12,26 @@ services:
         sync: false          # set manually in Render dashboard
       - key: CORS_ALLOWED_ORIGINS
         sync: false          # set to your Vercel URL after deploy
-      - key: DATABASE_URL
+      - key: DB_HOST
         fromDatabase:
           name: myiittwin-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: myiittwin-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: myiittwin-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: myiittwin-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: myiittwin-db
+          property: password
 
 databases:
   - name: myiittwin-db
