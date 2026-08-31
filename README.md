@@ -6,7 +6,7 @@
 
 ## What is this?
 
-**myIITtwin** is a conversational AI peer: Aryan, a CSE student at IIT Bombay, who lives a parallel version of your college life.
+**myIITtwin** is a conversational AI peer : Aryan, a CSE student at IIT Bombay, who lives a parallel version of your college life.
 
 You're a tier 3 CS student. You've wondered what your batchmates at IIT are doing right now. Not to compare. Not to feel behind. Just that quiet curiosity - *if I had gotten in, what would my life look like at this exact moment?*
 
